@@ -9,6 +9,7 @@ type CourseRow = {
   days: string;
   exam_date: string;
   type: string;
+  track_name: string;
 };
 
 const VALID_DAYS = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"];
@@ -19,7 +20,7 @@ export async function GET() {
   if (!user) return Response.json({ error: "Sign in to load saved courses." }, { status: 401 });
   await ensureSchema();
   const result = await getD1().prepare(
-    "SELECT id, name, start_time, end_time, days, exam_date, type FROM courses WHERE user_id = ? ORDER BY created_at ASC"
+    "SELECT id, name, start_time, end_time, days, exam_date, type, track_name FROM courses WHERE user_id = ? ORDER BY created_at ASC"
   ).bind(user.userId).all<CourseRow>();
   return Response.json({ courses: (result.results ?? []).map(toCourse) });
 }
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
   const endTime = typeof body.endTime === "string" ? body.endTime : "";
   const examDate = typeof body.examDate === "string" ? body.examDate : "";
   const type = typeof body.type === "string" && VALID_TYPES.includes(body.type) ? body.type : "";
+  const trackName = type === "Track" && typeof body.trackName === "string" ? body.trackName.trim().slice(0, 80) : "";
   const days = Array.isArray(body.days) ? body.days.filter((day): day is string => typeof day === "string" && VALID_DAYS.includes(day)) : [];
 
   if (!name || !validTime(startTime) || !validTime(endTime) || !examDate || !days.length) {
@@ -45,23 +47,23 @@ export async function POST(request: Request) {
   await ensureSchema();
   const db = getD1();
   const existing = await db.prepare(
-    "SELECT id, name, start_time, end_time, days, exam_date, type FROM courses WHERE user_id = ?"
+    "SELECT id, name, start_time, end_time, days, exam_date, type, track_name FROM courses WHERE user_id = ?"
   ).bind(user.userId).all<CourseRow>();
   const courses = (existing.results ?? []).map(toCourse);
-  const overlap = courses.find((course) =>
+  const overlap = courses.find((course: ReturnType<typeof toCourse>) =>
     course.days.some((day: string) => days.includes(day)) &&
     timeNumber(startTime) < timeNumber(course.endTime) &&
     timeNumber(endTime) > timeNumber(course.startTime)
   );
   if (overlap) return Response.json({ error: `Schedule conflict with ${overlap.name}. Adjacent classes are allowed, but these times overlap.` }, { status: 409 });
-  const examConflict = courses.find((course) => course.examDate.slice(0, 16) === examDate.slice(0, 16));
+  const examConflict = courses.find((course: ReturnType<typeof toCourse>) => course.examDate.slice(0, 16) === examDate.slice(0, 16));
   if (examConflict) return Response.json({ error: `Exam conflict with ${examConflict.name}. The course wasn’t added.` }, { status: 409 });
 
   const id = crypto.randomUUID();
   await db.prepare(
-    "INSERT INTO courses (id, user_id, name, start_time, end_time, days, exam_date, type, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-  ).bind(id, user.userId, name, startTime, endTime, JSON.stringify(days), examDate, type, new Date().toISOString()).run();
-  return Response.json({ course: { id, name, startTime, endTime, days, examDate, type } }, { status: 201 });
+    "INSERT INTO courses (id, user_id, name, start_time, end_time, days, exam_date, type, track_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  ).bind(id, user.userId, name, startTime, endTime, JSON.stringify(days), examDate, type, trackName, new Date().toISOString()).run();
+  return Response.json({ course: { id, name, startTime, endTime, days, examDate, type, trackName } }, { status: 201 });
 }
 
 export async function DELETE(request: Request) {
@@ -77,7 +79,7 @@ export async function DELETE(request: Request) {
 function toCourse(row: CourseRow) {
   let days: string[] = [];
   try { days = JSON.parse(row.days); } catch { days = []; }
-  return { id: row.id, name: row.name, startTime: row.start_time, endTime: row.end_time, days, examDate: row.exam_date, type: row.type };
+  return { id: row.id, name: row.name, startTime: row.start_time, endTime: row.end_time, days, examDate: row.exam_date, type: row.type, trackName: row.track_name || "" };
 }
 function validTime(value: string) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(value); }
 function timeNumber(value: string) { const [hours, minutes] = value.split(":").map(Number); return hours + minutes / 60; }

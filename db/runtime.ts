@@ -23,9 +23,14 @@ export async function ensureSchema() {
       days TEXT NOT NULL,
       exam_date TEXT NOT NULL,
       type TEXT NOT NULL DEFAULT '',
+      track_name TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL
     )`),
     db.prepare("CREATE INDEX IF NOT EXISTS idx_courses_user_id ON courses(user_id)"),
   ]);
+  const courseColumns = await db.prepare("PRAGMA table_info(courses)").all<{ name: string }>();
+  if (!(courseColumns.results ?? []).some((column: { name: string }) => column.name === "track_name")) {
+    await db.prepare("ALTER TABLE courses ADD COLUMN track_name TEXT NOT NULL DEFAULT ''").run();
+  }
   await db.prepare("PRAGMA optimize").run();
 }

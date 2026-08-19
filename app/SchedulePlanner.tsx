@@ -13,10 +13,12 @@ type Course = {
   days: Day[];
   examDate: string;
   type: CourseType;
+  trackName: string;
 };
 
 const DAYS: Day[] = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"];
 const HOURS = Array.from({ length: 12 }, (_, index) => index + 7);
+const PERSIAN_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
 const TYPES: CourseType[] = ["General", "Major requirements", "Track", "Elective courses"];
 const EMPTY_FORM: Omit<Course, "id"> = {
   name: "",
@@ -25,13 +27,14 @@ const EMPTY_FORM: Omit<Course, "id"> = {
   days: [],
   examDate: "",
   type: "",
+  trackName: "",
 };
 const DEMO_COURSES: Course[] = [
-  { id: "demo-ap", name: "Advanced Programming", startTime: "13:30", endTime: "15:00", days: ["Saturday", "Monday"], examDate: "2026-12-22T09:00", type: "Major requirements" },
-  { id: "demo-algo", name: "Algorithms", startTime: "15:00", endTime: "16:30", days: ["Saturday", "Monday"], examDate: "2026-12-28T09:00", type: "Major requirements" },
-  { id: "demo-linear", name: "Linear Algebra", startTime: "09:00", endTime: "10:30", days: ["Sunday", "Tuesday"], examDate: "2027-01-03T13:30", type: "General" },
-  { id: "demo-net", name: "Computer Networks", startTime: "11:00", endTime: "13:00", days: ["Wednesday"], examDate: "2027-01-08T11:00", type: "Track" },
-  { id: "demo-ai", name: "AI Foundations", startTime: "14:00", endTime: "16:00", days: ["Tuesday"], examDate: "2027-01-11T08:30", type: "Elective courses" },
+  { id: "demo-ap", name: "Advanced Programming", startTime: "13:30", endTime: "15:00", days: ["Saturday", "Monday"], examDate: "2026-12-22T09:00", type: "Major requirements", trackName: "" },
+  { id: "demo-algo", name: "Algorithms", startTime: "15:00", endTime: "16:30", days: ["Saturday", "Monday"], examDate: "2026-12-28T09:00", type: "Major requirements", trackName: "" },
+  { id: "demo-linear", name: "Linear Algebra", startTime: "09:00", endTime: "10:30", days: ["Sunday", "Tuesday"], examDate: "2027-01-03T13:30", type: "General", trackName: "" },
+  { id: "demo-net", name: "Computer Networks", startTime: "11:00", endTime: "13:00", days: ["Wednesday"], examDate: "2027-01-08T11:00", type: "Track", trackName: "Software" },
+  { id: "demo-ai", name: "AI Foundations", startTime: "14:00", endTime: "16:00", days: ["Tuesday"], examDate: "2027-01-11T08:30", type: "Elective courses", trackName: "" },
 ];
 
 export function SchedulePlanner({ user }: { user: User }) {
@@ -95,7 +98,7 @@ export function SchedulePlanner({ user }: { user: User }) {
   }
 
   function openCourseForm() {
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM, examDate: defaultExamDate() });
     setError("");
     setAddOpen(true);
   }
@@ -198,7 +201,7 @@ export function SchedulePlanner({ user }: { user: User }) {
     context.strokeStyle = "#dfe5ef";
     context.lineWidth = 1;
     for (let index = 0; index < HOURS.length; index += 1) {
-      const lineX = x + (index / 11) * gridWidth;
+      const lineX = x + ((11 - index) / 11) * gridWidth;
       context.beginPath(); context.moveTo(lineX, y); context.lineTo(lineX, y + rowHeight * 5); context.stroke();
       context.fillStyle = "#737b8f"; context.font = "12px Arial";
       context.fillText(`${String(HOURS[index]).padStart(2, "0")}:00`, lineX - 17, y - 16);
@@ -209,7 +212,7 @@ export function SchedulePlanner({ user }: { user: User }) {
       context.fillStyle = "#202a40"; context.font = "700 15px Arial";
       context.fillText(day, x + gridWidth + 20, rowY + 56);
       courses.filter((course) => course.days.includes(day)).forEach((course) => {
-        const blockX = x + ((timeNumber(course.startTime) - 7) / 11) * gridWidth;
+        const blockX = x + ((18 - timeNumber(course.endTime)) / 11) * gridWidth;
         const blockWidth = ((timeNumber(course.endTime) - timeNumber(course.startTime)) / 11) * gridWidth;
         context.fillStyle = exportColor(course.type);
         roundedRect(context, blockX + 3, rowY + 14, Math.max(blockWidth - 6, 25), 76, 12);
@@ -217,7 +220,7 @@ export function SchedulePlanner({ user }: { user: User }) {
         context.fillStyle = "#ffffff"; context.font = "700 13px Arial";
         context.fillText(trimCanvasText(context, course.name, blockWidth - 24), blockX + 15, rowY + 45);
         context.font = "11px Arial";
-        context.fillText(`${course.startTime}–${course.endTime}`, blockX + 15, rowY + 68);
+        context.fillText(`${course.trackName ? `${course.trackName} · ` : ""}${course.startTime}–${course.endTime}`, blockX + 15, rowY + 68);
       });
     });
     const link = document.createElement("a");
@@ -231,11 +234,11 @@ export function SchedulePlanner({ user }: { user: User }) {
       <aside className="side-rail" aria-label="Main navigation">
         <div className="brand-mark">U</div>
         <nav>
-          <button className="rail-button active" aria-label="Weekly schedule"><span>▦</span><small>Plan</small></button>
-          <button className="rail-button" aria-label="Courses" onClick={openCourseForm}><span>◇</span><small>Add</small></button>
-          <button className="rail-button" aria-label="Exams"><span>⌁</span><small>Exams</small></button>
+          <button className="rail-button active" aria-label="Weekly schedule"><span>▦</span></button>
+          <button className="rail-button" aria-label="Add course" onClick={openCourseForm}><span>＋</span></button>
+          <button className="rail-button" aria-label="Exams"><span>⌁</span></button>
         </nav>
-        <button className="rail-button help" aria-label="Help"><span>?</span><small>Help</small></button>
+        <button className="rail-button help" aria-label="Help"><span>?</span></button>
       </aside>
 
       <section className="workspace">
@@ -251,14 +254,13 @@ export function SchedulePlanner({ user }: { user: User }) {
         <div className="page-content">
           <div className="page-heading">
             <div>
-              <p className="eyebrow">Semester planner · {courses.length} {courses.length === 1 ? "course" : "courses"}</p>
-              <h1>My weekly plan</h1>
-              <p>Build a conflict-free week before registration day.</p>
+              <h1>Weekly plan</h1>
+              <span className="heading-count">{courses.length} {courses.length === 1 ? "course" : "courses"}</span>
             </div>
             <div className="heading-actions">
               <div className="export-wrap" ref={exportMenuRef}>
                 <button className="secondary-button" onClick={() => setExportOpen((open) => !open)} aria-expanded={exportOpen}>⇩&nbsp; Print / export <span>⌄</span></button>
-                {exportOpen && <div className="export-menu"><button onClick={() => { setExportOpen(false); window.print(); }}><span>PDF</span><div><strong>Save as PDF</strong><small>Opens print preview</small></div></button><button onClick={exportPng}><span>PNG</span><div><strong>Download PNG</strong><small>High-resolution image</small></div></button></div>}
+                {exportOpen && <div className="export-menu"><button onClick={() => { setExportOpen(false); window.print(); }}><span>PDF</span><strong>Save as PDF</strong></button><button onClick={exportPng}><span>PNG</span><strong>Download PNG</strong></button></div>}
               </div>
               <button className="primary-button" onClick={openCourseForm}>＋ Add course</button>
             </div>
@@ -268,31 +270,31 @@ export function SchedulePlanner({ user }: { user: User }) {
           {notice && <div className="toast" role="status"><span>✓</span>{notice}</div>}
 
           <div className="insight-row">
-            <article className="insight-card"><span className="insight-icon blue">◫</span><div><strong>{formatHours(totalHours)}</strong><span>class hours each week</span></div></article>
-            <article className="insight-card"><span className="insight-icon mint">✓</span><div><strong>Conflict-free</strong><span>Adjacent classes fit perfectly</span></div></article>
+            <article className="insight-card"><span className="insight-icon blue">◫</span><div><strong>{formatHours(totalHours)}</strong><span>each week</span></div></article>
+            <article className="insight-card"><span className="insight-icon mint">✓</span><div><strong>No conflicts</strong></div></article>
             <article className="next-exam">
-              {nextExam ? <><span className="exam-date"><b>{new Date(nextExam.examDate).getDate()}</b><small>{new Date(nextExam.examDate).toLocaleString("en", { month: "short" }).toUpperCase()}</small></span><div><small>NEXT EXAM</small><strong>{nextExam.name} · {formatExamTime(nextExam.examDate)}</strong></div><span>→</span></> : <><span className="exam-date"><b>—</b><small>EXAM</small></span><div><small>NEXT EXAM</small><strong>No exams planned yet</strong></div></>}
+              {nextExam ? <><span className="exam-date"><b>{formatPersianDateParts(nextExam.examDate).day}</b><small>{formatPersianDateParts(nextExam.examDate).month}</small></span><div><small>NEXT EXAM</small><strong>{nextExam.name} · {formatExamTime(nextExam.examDate)}</strong></div><span>→</span></> : <><span className="exam-date"><b>—</b><small>EXAM</small></span><div><strong>No exams yet</strong></div></>}
             </article>
           </div>
 
           <section className="schedule-card" aria-label="Weekly course schedule">
             <div className="schedule-toolbar">
-              <div><h2>Weekly schedule</h2><p>Saturday to Wednesday · 07:00–18:00 · half-hour friendly</p></div>
+              <div><h2>Schedule</h2><p>07:00–18:00</p></div>
               <div className="legend"><span><i className="dot blue-dot" /> Major</span><span><i className="dot mint-dot" /> General</span><span><i className="dot amber-dot" /> Track</span><span><i className="dot rose-dot" /> Elective</span></div>
             </div>
             <div className="schedule-scroll">
               <div className="schedule-grid">
                 <div className="time-row">
-                  {HOURS.map((hour, index) => <span key={hour} style={{ left: `${(index / 11) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}
+                  {HOURS.map((hour, index) => <span key={hour} style={{ left: `${((11 - index) / 11) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}
                   <b className="day-column-title">DAY</b>
                 </div>
                 {DAYS.map((day) => (
                   <div className="day-row" key={day}>
                     <div className="hour-lines">{HOURS.map((hour) => <i key={hour} />)}</div>
                     {courses.filter((course) => course.days.includes(day)).map((course) => (
-                      <article className={`course-block ${tone(course.type)}`} key={course.id} style={{ left: `${((timeNumber(course.startTime) - 7) / 11) * 100}%`, width: `${((timeNumber(course.endTime) - timeNumber(course.startTime)) / 11) * 100}%` }} title={`${course.name}, ${course.startTime} to ${course.endTime}`}>
+                      <article className={`course-block ${tone(course.type)}`} key={course.id} style={{ left: `${((18 - timeNumber(course.endTime)) / 11) * 100}%`, width: `${((timeNumber(course.endTime) - timeNumber(course.startTime)) / 11) * 100}%` }} title={`${course.name}, ${course.startTime} to ${course.endTime}`}>
                         <button className="remove-course" onClick={() => removeCourse(course)} aria-label={`Remove ${course.name}`}>×</button>
-                        <strong>{course.name}</strong><span>{course.startTime}–{course.endTime}</span>
+                        <strong>{course.name}</strong><span>{course.trackName ? `${course.trackName} · ` : ""}{course.startTime}–{course.endTime}</span>
                       </article>
                     ))}
                     <strong className="day-name">{day}</strong>
@@ -300,14 +302,14 @@ export function SchedulePlanner({ user }: { user: User }) {
                 ))}
               </div>
             </div>
-            <div className="schedule-footer"><span><i className="pulse" /> All clear — no overlaps</span><button onClick={openCourseForm}>＋ Add another course</button></div>
+            <div className="schedule-footer"><span><i className="pulse" /> No overlaps</span><button onClick={openCourseForm}>＋ Add course</button></div>
           </section>
 
           <section className="exam-strip">
-            <div><span className="section-icon">⌁</span><div><h2>Exam runway</h2><p>Every assessment at a glance.</p></div></div>
+            <div><span className="section-icon">⌁</span><div><h2>Exams</h2></div></div>
             <div className="exam-list">
               {courses.slice().sort((a, b) => a.examDate.localeCompare(b.examDate)).slice(0, 4).map((course) => (
-                <article key={course.id}><span className={`exam-chip ${tone(course.type)}`}>{new Date(course.examDate).toLocaleString("en", { month: "short", day: "numeric" })}</span><div><strong>{course.name}</strong><small>{formatExamTime(course.examDate)}</small></div></article>
+                <article key={course.id}><span className={`exam-chip ${tone(course.type)}`}>{formatPersianShortDate(course.examDate)}</span><div><strong>{course.name}</strong><small>{formatExamTime(course.examDate)}</small></div></article>
               ))}
               {!courses.length && <p className="empty-note">Your exams will appear here after you add a course.</p>}
             </div>
@@ -318,18 +320,19 @@ export function SchedulePlanner({ user }: { user: User }) {
       {addOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setAddOpen(false); }}>
           <section className="modal" role="dialog" aria-modal="true" aria-labelledby="course-modal-title">
-            <div className="modal-header"><div><p>NEW COURSE</p><h2 id="course-modal-title">Place it in your week</h2></div><button onClick={() => setAddOpen(false)} aria-label="Close">×</button></div>
+            <div className="modal-header"><div><p>NEW COURSE</p><h2 id="course-modal-title">Add course</h2></div><button onClick={() => setAddOpen(false)} aria-label="Close">×</button></div>
             <form onSubmit={saveCourse}>
               <label className="field full"><span>Course name</span><input autoFocus required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="e.g. Advanced Programming" /></label>
               <div className="form-grid">
-                <label className="field"><span>Starts</span><input required type="time" min="07:00" max="17:30" step="1800" value={form.startTime} onChange={(event) => setForm({ ...form, startTime: event.target.value })} /></label>
-                <label className="field"><span>Ends</span><input required type="time" min="07:30" max="18:00" step="1800" value={form.endTime} onChange={(event) => setForm({ ...form, endTime: event.target.value })} /></label>
+                <BoundedTimeField label="Starts" value={form.startTime} onChange={(startTime) => setForm({ ...form, startTime })} />
+                <BoundedTimeField label="Ends" value={form.endTime} onChange={(endTime) => setForm({ ...form, endTime })} />
               </div>
               <fieldset className="day-picker"><legend>Days of the week</legend><div>{DAYS.map((day) => <button type="button" className={form.days.includes(day) ? "selected" : ""} onClick={() => toggleDay(day)} key={day}>{day.slice(0, 3)}</button>)}</div></fieldset>
-              <label className="field full"><span>Exam date & time</span><input required type="datetime-local" value={form.examDate} onChange={(event) => setForm({ ...form, examDate: event.target.value })} /></label>
-              <label className="field full"><span>Course type <i>optional</i></span><select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value as CourseType })}><option value="">Not specified</option>{TYPES.map((type) => <option key={type}>{type}</option>)}</select></label>
+              <PersianExamDateTime value={form.examDate} onChange={(examDate) => setForm({ ...form, examDate })} />
+              <label className="field full"><span>Course type <i>optional</i></span><select value={form.type} onChange={(event) => { const type = event.target.value as CourseType; setForm({ ...form, type, trackName: type === "Track" ? form.trackName : "" }); }}><option value="">Not specified</option>{TYPES.map((type) => <option key={type}>{type}</option>)}</select></label>
+              {form.type === "Track" && <label className="field full"><span>Track name <i>optional</i></span><input value={form.trackName} onChange={(event) => setForm({ ...form, trackName: event.target.value })} placeholder="e.g. Software, Hardware, AI" /></label>}
               {error && <div className="inline-error" role="alert"><b>!</b><span>{error}</span></div>}
-              {!user && <p className="guest-note">You can plan as a guest. Sign in whenever you want this schedule saved to your account.</p>}
+              {!user && <p className="guest-note">Sign in only if you want this plan saved.</p>}
               <button className="submit-button" disabled={saving}>{saving ? "Saving…" : "Add to my schedule"} <span>→</span></button>
             </form>
           </section>
@@ -345,6 +348,60 @@ export function SchedulePlanner({ user }: { user: User }) {
         </div>
       )}
     </main>
+  );
+}
+
+function BoundedTimeField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  const [hourValue = "07", minuteValue = "00"] = value.split(":");
+  const hour = Number(hourValue);
+  const minute = Number(minuteValue);
+  const minuteOptions = Array.from({ length: hour === 18 ? 1 : 60 }, (_, index) => index);
+
+  function setHour(nextHour: number) {
+    const nextMinute = nextHour === 18 ? 0 : minute;
+    onChange(`${pad(nextHour)}:${pad(nextMinute)}`);
+  }
+
+  return (
+    <div className="field time-field">
+      <span>{label}</span>
+      <div className="time-picker">
+        <label><small>Hour</small><select aria-label={`${label} hour`} value={hour} onChange={(event) => setHour(Number(event.target.value))}>{HOURS.map((item) => <option key={item} value={item}>{pad(item)}</option>)}</select></label>
+        <b>:</b>
+        <label><small>Minute</small><select aria-label={`${label} minute`} value={hour === 18 ? 0 : minute} onChange={(event) => onChange(`${pad(hour)}:${pad(Number(event.target.value))}`)}>{minuteOptions.map((item) => <option key={item} value={item}>{pad(item)}</option>)}</select></label>
+      </div>
+    </div>
+  );
+}
+
+function PersianExamDateTime({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const fallback = defaultExamDate();
+  const [datePart, timePart = "09:00"] = (value || fallback).split("T");
+  const [gy, gm, gd] = datePart.split("-").map(Number);
+  const jalali = toJalaali(gy, gm, gd);
+  const today = new Date();
+  const currentJalali = toJalaali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+  const years = Array.from({ length: 8 }, (_, index) => currentJalali.jy - 1 + index);
+  const days = Array.from({ length: daysInJalaliMonth(jalali.jy, jalali.jm) }, (_, index) => index + 1);
+
+  function setDate(parts: Partial<JalaliDate>) {
+    const jy = parts.jy ?? jalali.jy;
+    const jm = parts.jm ?? jalali.jm;
+    const jd = Math.min(parts.jd ?? jalali.jd, daysInJalaliMonth(jy, jm));
+    const gregorian = toGregorian(jy, jm, jd);
+    onChange(`${pad(gregorian.gy)}-${pad(gregorian.gm)}-${pad(gregorian.gd)}T${timePart}`);
+  }
+
+  return (
+    <div className="persian-exam">
+      <span>Exam date · Persian calendar</span>
+      <div className="persian-date-grid" dir="rtl">
+        <label><small>سال</small><select aria-label="Persian exam year" value={jalali.jy} onChange={(event) => setDate({ jy: Number(event.target.value) })}>{years.map((year) => <option key={year}>{year}</option>)}</select></label>
+        <label><small>ماه</small><select aria-label="Persian exam month" value={jalali.jm} onChange={(event) => setDate({ jm: Number(event.target.value) })}>{PERSIAN_MONTHS.map((month, index) => <option key={month} value={index + 1}>{month}</option>)}</select></label>
+        <label><small>روز</small><select aria-label="Persian exam day" value={jalali.jd} onChange={(event) => setDate({ jd: Number(event.target.value) })}>{days.map((day) => <option key={day}>{day}</option>)}</select></label>
+      </div>
+      <BoundedTimeField label="Exam time" value={timePart} onChange={(time) => onChange(`${datePart}T${time}`)} />
+    </div>
   );
 }
 
@@ -379,10 +436,26 @@ function exportColor(type: CourseType) {
   return type === "General" ? "#168565" : type === "Track" ? "#b77716" : type === "Elective courses" ? "#c64768" : type === "Major requirements" ? "#315eea" : "#7952c9";
 }
 function normalizeDate(value: string) { return value.slice(0, 16); }
-function formatExamDate(value: string) { return new Date(value).toLocaleString("en", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
-function formatExamTime(value: string) { return new Date(value).toLocaleString("en", { hour: "2-digit", minute: "2-digit" }); }
+function formatExamDate(value: string) { return `${formatPersianShortDate(value)} · ${formatExamTime(value)}`; }
+function formatExamTime(value: string) { return value.slice(11, 16); }
 function formatHours(value: number) { return `${Number.isInteger(value) ? value : value.toFixed(1)}h`; }
 function initials(value: string) { return value.split(/\s+|@/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "G"; }
+function pad(value: number) { return String(value).padStart(2, "0"); }
+function defaultExamDate() {
+  const date = new Date();
+  date.setDate(date.getDate() + 30);
+  date.setHours(9, 0, 0, 0);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T09:00`;
+}
+function formatPersianDateParts(value: string) {
+  const [gy, gm, gd] = value.slice(0, 10).split("-").map(Number);
+  const date = toJalaali(gy, gm, gd);
+  return { day: String(date.jd), month: PERSIAN_MONTHS[date.jm - 1] };
+}
+function formatPersianShortDate(value: string) {
+  const parts = formatPersianDateParts(value);
+  return `${parts.day} ${parts.month}`;
+}
 function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
   context.beginPath(); context.roundRect(x, y, width, height, radius);
 }
@@ -391,4 +464,82 @@ function trimCanvasText(context: CanvasRenderingContext2D, value: string, width:
   let trimmed = value;
   while (trimmed.length && context.measureText(`${trimmed}…`).width > width) trimmed = trimmed.slice(0, -1);
   return `${trimmed}…`;
+}
+
+type JalaliDate = { jy: number; jm: number; jd: number };
+type GregorianDate = { gy: number; gm: number; gd: number };
+const JALALI_BREAKS = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+
+function intDiv(left: number, right: number) { return Math.trunc(left / right); }
+function intMod(left: number, right: number) { return left - Math.trunc(left / right) * right; }
+
+function jalaliCalendar(jy: number) {
+  const gy = jy + 621;
+  let leapJ = -14;
+  let previous = JALALI_BREAKS[0];
+  let jump = 0;
+  let next = 0;
+  if (jy < previous || jy >= JALALI_BREAKS[JALALI_BREAKS.length - 1]) throw new Error("Persian year is out of range.");
+  for (let index = 1; index < JALALI_BREAKS.length; index += 1) {
+    next = JALALI_BREAKS[index];
+    jump = next - previous;
+    if (jy < next) break;
+    leapJ += intDiv(jump, 33) * 8 + intDiv(intMod(jump, 33), 4);
+    previous = next;
+  }
+  let distance = jy - previous;
+  leapJ += intDiv(distance, 33) * 8 + intDiv(intMod(distance, 33) + 3, 4);
+  if (intMod(jump, 33) === 4 && jump - distance === 4) leapJ += 1;
+  const leapG = intDiv(gy, 4) - intDiv((intDiv(gy, 100) + 1) * 3, 4) - 150;
+  const march = 20 + leapJ - leapG;
+  if (jump - distance < 6) distance = distance - jump + intDiv(jump + 4, 33) * 33;
+  let leap = intMod(intMod(distance + 1, 33) - 1, 4);
+  if (leap === -1) leap = 4;
+  return { leap, gy, march };
+}
+
+function gregorianDayNumber(gy: number, gm: number, gd: number) {
+  let value = intDiv((gy + intDiv(gm - 8, 6) + 100100) * 1461, 4);
+  value += intDiv(153 * intMod(gm + 9, 12) + 2, 5) + gd - 34840408;
+  value -= intDiv(intDiv(gy + 100100 + intDiv(gm - 8, 6), 100) * 3, 4) - 752;
+  return value;
+}
+
+function dayNumberToGregorian(dayNumber: number): GregorianDate {
+  let value = 4 * dayNumber + 139361631;
+  value += intDiv(intDiv(4 * dayNumber + 183187720, 146097) * 3, 4) * 4 - 3908;
+  const part = intDiv(intMod(value, 1461), 4) * 5 + 308;
+  const gd = intDiv(intMod(part, 153), 5) + 1;
+  const gm = intMod(intDiv(part, 153), 12) + 1;
+  const gy = intDiv(value, 1461) - 100100 + intDiv(8 - gm, 6);
+  return { gy, gm, gd };
+}
+
+function toGregorian(jy: number, jm: number, jd: number): GregorianDate {
+  const calendar = jalaliCalendar(jy);
+  const firstFarvardin = gregorianDayNumber(calendar.gy, 3, calendar.march);
+  return dayNumberToGregorian(firstFarvardin + (jm - 1) * 31 - intDiv(jm, 7) * (jm - 7) + jd - 1);
+}
+
+function toJalaali(gy: number, gm: number, gd: number): JalaliDate {
+  const dayNumber = gregorianDayNumber(gy, gm, gd);
+  let jy = gy - 621;
+  const calendar = jalaliCalendar(jy);
+  const firstFarvardin = gregorianDayNumber(gy, 3, calendar.march);
+  let offset = dayNumber - firstFarvardin;
+  if (offset >= 0) {
+    if (offset <= 185) return { jy, jm: 1 + intDiv(offset, 31), jd: intMod(offset, 31) + 1 };
+    offset -= 186;
+  } else {
+    jy -= 1;
+    offset += 179;
+    if (calendar.leap === 1) offset += 1;
+  }
+  return { jy, jm: 7 + intDiv(offset, 30), jd: intMod(offset, 30) + 1 };
+}
+
+function daysInJalaliMonth(jy: number, jm: number) {
+  if (jm <= 6) return 31;
+  if (jm <= 11) return 30;
+  return jalaliCalendar(jy).leap === 0 ? 30 : 29;
 }
