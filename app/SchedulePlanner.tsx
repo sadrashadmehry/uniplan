@@ -71,7 +71,7 @@ export function SchedulePlanner({ user }: { user: User }) {
         setProfileName(profileData.profile.displayName || user.displayName);
         setMajorFocus(profileData.profile.majorFocus || "");
       }
-    }).catch(() => setError("We couldn’t sync your saved plan. Your current view is still available."));
+    }).catch(() => setError("Your saved plan couldn’t be loaded. This view is still available."));
   }, [user]);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export function SchedulePlanner({ user }: { user: User }) {
         setCourses((current) => [...current, optimistic]);
       }
       setAddOpen(false);
-      setNotice(user ? "Course added and synced to your account." : "Course added to this planning session.");
+      setNotice(user ? "Course saved." : "Course added for this visit.");
       window.setTimeout(() => setNotice(""), 3200);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The course could not be saved.");
@@ -152,7 +152,7 @@ export function SchedulePlanner({ user }: { user: User }) {
         body: JSON.stringify({ id: course.id }),
       });
       if (!response.ok) {
-        setError("We couldn’t remove that course. Please try again.");
+        setError("That course couldn’t be removed. Please try again.");
         return;
       }
     }
@@ -171,10 +171,10 @@ export function SchedulePlanner({ user }: { user: User }) {
       });
       if (!response.ok) throw new Error();
       setProfileOpen(false);
-      setNotice("Profile preferences saved.");
+      setNotice("Profile saved.");
       window.setTimeout(() => setNotice(""), 3000);
     } catch {
-      setError("We couldn’t save your profile preferences.");
+      setError("Your profile couldn’t be saved.");
     } finally {
       setSaving(false);
     }
@@ -193,7 +193,7 @@ export function SchedulePlanner({ user }: { user: User }) {
     context.fillRect(0, 0, 1400, 760);
     context.fillStyle = "#111a30";
     context.font = "700 34px Arial";
-    context.fillText("UniPlan · Weekly schedule", 48, 60);
+    context.fillText("UniPlan · My week", 48, 60);
     context.fillStyle = "#6d7589";
     context.font = "16px Arial";
     context.fillText("Saturday to Wednesday · 07:00–18:00", 48, 90);
@@ -246,7 +246,7 @@ export function SchedulePlanner({ user }: { user: User }) {
           <div className="brand-lockup"><div className="mini-logo">U</div><span>UniPlan</span></div>
           <div className="top-actions">
             <button className="icon-button" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={toggleTheme}>{theme === "light" ? "☾" : "☼"}</button>
-            {user ? <span className="sync-state"><i /> Synced</span> : <a className="signin-button" href="/signin-with-chatgpt?return_to=%2F">Sign in to save</a>}
+            {user ? <span className="sync-state"><i /> Saved</span> : <a className="signin-button" href="/signin-with-chatgpt?return_to=%2F">Save my plan</a>}
             <button className="avatar" aria-label="Edit profile" onClick={() => setProfileOpen(true)}>{initials(profileName || user?.email || "Guest")}</button>
           </div>
         </header>
@@ -254,15 +254,15 @@ export function SchedulePlanner({ user }: { user: User }) {
         <div className="page-content">
           <div className="page-heading">
             <div>
-              <h1>Weekly plan</h1>
+              <h1>My week</h1>
               <span className="heading-count">{courses.length} {courses.length === 1 ? "course" : "courses"}</span>
             </div>
             <div className="heading-actions">
               <div className="export-wrap" ref={exportMenuRef}>
-                <button className="secondary-button" onClick={() => setExportOpen((open) => !open)} aria-expanded={exportOpen}>⇩&nbsp; Print / export <span>⌄</span></button>
+                <button className="secondary-button" onClick={() => setExportOpen((open) => !open)} aria-expanded={exportOpen}>⇩&nbsp; Export <span>⌄</span></button>
                 {exportOpen && <div className="export-menu"><button onClick={() => { setExportOpen(false); window.print(); }}><span>PDF</span><strong>Save as PDF</strong></button><button onClick={exportPng}><span>PNG</span><strong>Download PNG</strong></button></div>}
               </div>
-              <button className="primary-button" onClick={openCourseForm}>＋ Add course</button>
+              <button className="primary-button" onClick={openCourseForm}>＋ New course</button>
             </div>
           </div>
 
@@ -270,16 +270,16 @@ export function SchedulePlanner({ user }: { user: User }) {
           {notice && <div className="toast" role="status"><span>✓</span>{notice}</div>}
 
           <div className="insight-row">
-            <article className="insight-card"><span className="insight-icon blue">◫</span><div><strong>{formatHours(totalHours)}</strong><span>each week</span></div></article>
-            <article className="insight-card"><span className="insight-icon mint">✓</span><div><strong>No conflicts</strong></div></article>
+            <article className="insight-card"><span className="insight-icon blue">◫</span><div><strong>{formatHours(totalHours)}</strong><span>of class</span></div></article>
+            <article className="insight-card"><span className="insight-icon mint">✓</span><div><strong>Everything fits</strong></div></article>
             <article className="next-exam">
-              {nextExam ? <><span className="exam-date"><b>{formatPersianDateParts(nextExam.examDate).day}</b><small>{formatPersianDateParts(nextExam.examDate).month}</small></span><div><small>NEXT EXAM</small><strong>{nextExam.name} · {formatExamTime(nextExam.examDate)}</strong></div><span>→</span></> : <><span className="exam-date"><b>—</b><small>EXAM</small></span><div><strong>No exams yet</strong></div></>}
+              {nextExam ? <><span className="exam-date"><b>{formatPersianDateParts(nextExam.examDate).day}</b><small>{formatPersianDateParts(nextExam.examDate).month}</small></span><div><small>UP NEXT</small><strong>{nextExam.name} · {formatExamTime(nextExam.examDate)}</strong></div><span>→</span></> : <><span className="exam-date"><b>—</b><small>EXAM</small></span><div><strong>No exams scheduled</strong></div></>}
             </article>
           </div>
 
           <section className="schedule-card" aria-label="Weekly course schedule">
             <div className="schedule-toolbar">
-              <div><h2>Schedule</h2><p>07:00–18:00</p></div>
+              <div><h2>This week</h2><p>07:00–18:00</p></div>
               <div className="legend"><span><i className="dot blue-dot" /> Major</span><span><i className="dot mint-dot" /> General</span><span><i className="dot amber-dot" /> Track</span><span><i className="dot rose-dot" /> Elective</span></div>
             </div>
             <div className="schedule-scroll">
@@ -290,7 +290,7 @@ export function SchedulePlanner({ user }: { user: User }) {
                 </div>
                 {DAYS.map((day) => (
                   <div className="day-row" key={day}>
-                    <div className="hour-lines">{HOURS.map((hour) => <i key={hour} />)}</div>
+                    <div className="hour-lines">{Array.from({ length: 23 }, (_, index) => <i className={index % 2 ? "half-hour" : "full-hour"} style={{ left: `${(index / 22) * 100}%` }} key={index} />)}</div>
                     {courses.filter((course) => course.days.includes(day)).map((course) => (
                       <article className={`course-block ${tone(course.type)}`} key={course.id} style={{ left: `${((18 - timeNumber(course.endTime)) / 11) * 100}%`, width: `${((timeNumber(course.endTime) - timeNumber(course.startTime)) / 11) * 100}%` }} title={`${course.name}, ${course.startTime} to ${course.endTime}`}>
                         <button className="remove-course" onClick={() => removeCourse(course)} aria-label={`Remove ${course.name}`}>×</button>
@@ -302,7 +302,7 @@ export function SchedulePlanner({ user }: { user: User }) {
                 ))}
               </div>
             </div>
-            <div className="schedule-footer"><span><i className="pulse" /> No overlaps</span><button onClick={openCourseForm}>＋ Add course</button></div>
+            <div className="schedule-footer"><span><i className="pulse" /> Schedule looks clear</span><button onClick={openCourseForm}>＋ New course</button></div>
           </section>
 
           <section className="exam-strip">
@@ -320,20 +320,20 @@ export function SchedulePlanner({ user }: { user: User }) {
       {addOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setAddOpen(false); }}>
           <section className="modal" role="dialog" aria-modal="true" aria-labelledby="course-modal-title">
-            <div className="modal-header"><div><p>NEW COURSE</p><h2 id="course-modal-title">Add course</h2></div><button onClick={() => setAddOpen(false)} aria-label="Close">×</button></div>
+            <div className="modal-header"><div><p>COURSE DETAILS</p><h2 id="course-modal-title">Add a course</h2></div><button onClick={() => setAddOpen(false)} aria-label="Close">×</button></div>
             <form onSubmit={saveCourse}>
               <label className="field full"><span>Course name</span><input autoFocus required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="e.g. Advanced Programming" /></label>
               <div className="form-grid">
-                <BoundedTimeField label="Starts" value={form.startTime} onChange={(startTime) => setForm({ ...form, startTime })} />
-                <BoundedTimeField label="Ends" value={form.endTime} onChange={(endTime) => setForm({ ...form, endTime })} />
+                <BoundedTimeField label="Starts at" value={form.startTime} onChange={(startTime) => setForm({ ...form, startTime })} />
+                <BoundedTimeField label="Ends at" value={form.endTime} onChange={(endTime) => setForm({ ...form, endTime })} />
               </div>
-              <fieldset className="day-picker"><legend>Days of the week</legend><div>{DAYS.map((day) => <button type="button" className={form.days.includes(day) ? "selected" : ""} onClick={() => toggleDay(day)} key={day}>{day.slice(0, 3)}</button>)}</div></fieldset>
+              <fieldset className="day-picker"><legend>Meets on</legend><div>{DAYS.map((day) => <button type="button" className={form.days.includes(day) ? "selected" : ""} onClick={() => toggleDay(day)} key={day}>{day.slice(0, 3)}</button>)}</div></fieldset>
               <PersianExamDateTime value={form.examDate} onChange={(examDate) => setForm({ ...form, examDate })} />
-              <label className="field full"><span>Course type <i>optional</i></span><select value={form.type} onChange={(event) => { const type = event.target.value as CourseType; setForm({ ...form, type, trackName: type === "Track" ? form.trackName : "" }); }}><option value="">Not specified</option>{TYPES.map((type) => <option key={type}>{type}</option>)}</select></label>
+              <label className="field full"><span>Category <i>optional</i></span><select value={form.type} onChange={(event) => { const type = event.target.value as CourseType; setForm({ ...form, type, trackName: type === "Track" ? form.trackName : "" }); }}><option value="">Not specified</option>{TYPES.map((type) => <option key={type}>{type}</option>)}</select></label>
               {form.type === "Track" && <label className="field full"><span>Track name <i>optional</i></span><input value={form.trackName} onChange={(event) => setForm({ ...form, trackName: event.target.value })} placeholder="e.g. Software, Hardware, AI" /></label>}
               {error && <div className="inline-error" role="alert"><b>!</b><span>{error}</span></div>}
-              {!user && <p className="guest-note">Sign in only if you want this plan saved.</p>}
-              <button className="submit-button" disabled={saving}>{saving ? "Saving…" : "Add to my schedule"} <span>→</span></button>
+              {!user && <p className="guest-note">You can keep planning without signing in.</p>}
+              <button className="submit-button" disabled={saving}>{saving ? "Saving…" : "Add course"} <span>→</span></button>
             </form>
           </section>
         </div>
@@ -342,8 +342,8 @@ export function SchedulePlanner({ user }: { user: User }) {
       {profileOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setProfileOpen(false); }}>
           <section className="modal profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
-            <div className="modal-header"><div><p>PROFILE</p><h2 id="profile-title">{user ? "Your planning profile" : "Save your UniPlan"}</h2></div><button onClick={() => setProfileOpen(false)} aria-label="Close">×</button></div>
-            {user ? <form onSubmit={saveProfile}><div className="profile-hero"><span>{initials(profileName || user.email)}</span><div><strong>{profileName || user.displayName}</strong><small>{user.email}</small></div></div><label className="field full"><span>Display name</span><input value={profileName} onChange={(event) => setProfileName(event.target.value)} /></label><label className="field full"><span>Concentration / major focus</span><input value={majorFocus} onChange={(event) => setMajorFocus(event.target.value)} placeholder="e.g. Artificial Intelligence" /></label><p className="guest-note">This focus will help personalize future plan suggestions.</p><button className="submit-button" disabled={saving}>{saving ? "Saving…" : "Save profile"}</button><a className="signout-link" href="/signout-with-chatgpt?return_to=%2F">Sign out</a></form> : <div className="signin-panel"><div className="signin-orb">U</div><p>Keep your courses and profile available on every visit. Guest planning remains fully available.</p><a className="submit-button" href="/signin-with-chatgpt?return_to=%2F">Sign in with ChatGPT <span>→</span></a><button onClick={() => setProfileOpen(false)}>Continue as guest</button></div>}
+            <div className="modal-header"><div><p>PROFILE</p><h2 id="profile-title">{user ? "Your profile" : "Save your plan"}</h2></div><button onClick={() => setProfileOpen(false)} aria-label="Close">×</button></div>
+            {user ? <form onSubmit={saveProfile}><div className="profile-hero"><span>{initials(profileName || user.email)}</span><div><strong>{profileName || user.displayName}</strong><small>{user.email}</small></div></div><label className="field full"><span>Display name</span><input value={profileName} onChange={(event) => setProfileName(event.target.value)} /></label><label className="field full"><span>Study focus</span><input value={majorFocus} onChange={(event) => setMajorFocus(event.target.value)} placeholder="e.g. Artificial Intelligence" /></label><p className="guest-note">This can shape future course suggestions.</p><button className="submit-button" disabled={saving}>{saving ? "Saving…" : "Save changes"}</button><a className="signout-link" href="/signout-with-chatgpt?return_to=%2F">Sign out</a></form> : <div className="signin-panel"><div className="signin-orb">U</div><p>Sign in to keep this plan available on your next visit.</p><a className="submit-button" href="/signin-with-chatgpt?return_to=%2F">Sign in with ChatGPT <span>→</span></a><button onClick={() => setProfileOpen(false)}>Keep planning</button></div>}
           </section>
         </div>
       )}
@@ -394,7 +394,7 @@ function PersianExamDateTime({ value, onChange }: { value: string; onChange: (va
 
   return (
     <div className="persian-exam">
-      <span>Exam date · Persian calendar</span>
+      <span>Exam date · Persian</span>
       <div className="persian-date-grid" dir="rtl">
         <label><small>سال</small><select aria-label="Persian exam year" value={jalali.jy} onChange={(event) => setDate({ jy: Number(event.target.value) })}>{years.map((year) => <option key={year}>{year}</option>)}</select></label>
         <label><small>ماه</small><select aria-label="Persian exam month" value={jalali.jm} onChange={(event) => setDate({ jm: Number(event.target.value) })}>{PERSIAN_MONTHS.map((month, index) => <option key={month} value={index + 1}>{month}</option>)}</select></label>

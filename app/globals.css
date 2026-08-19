@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "XB Niloofar";
+  src: url("/fonts/xb-niloofar.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --ink: #111a30;
   --muted: #687187;
@@ -214,6 +222,38 @@ body { font-size: 16px; }
 .persian-date-grid { display: grid; grid-template-columns: 1fr 1.5fr .8fr; gap: 8px; }
 .persian-date-grid label { min-width: 0; display: grid; gap: 5px; }
 .persian-date-grid select { direction: rtl; }
+
+/* Compact timetable with clear hour and quieter half-hour guides */
+.time-row { height: 50px; }
+.day-row { height: 84px; border-top: 1.5px solid color-mix(in srgb, var(--line) 82%, var(--ink)); }
+.hour-lines { display: block; }
+.hour-lines i { position: absolute; top: 0; bottom: 0; border: 0; border-left: 1px solid color-mix(in srgb, var(--line) 76%, var(--ink)); }
+.hour-lines i.full-hour { opacity: .82; }
+.hour-lines i.half-hour { opacity: .3; border-left-style: dashed; }
+.hour-lines i:last-child { border-right: 0; }
+.course-block { top: 5px; height: 74px; border-left: 0; border-right: 0; }
+
+/* Softer typography hierarchy */
+.app-shell strong, .app-shell b { font-weight: 600; }
+.brand-mark, .mini-logo, .brand-lockup { font-weight: 700; }
+.signin-button, .secondary-button, .primary-button, .submit-button { font-weight: 600; }
+.avatar, .sync-state, .heading-count { font-weight: 500; }
+.page-heading h1 { font-weight: 650; }
+.schedule-toolbar h2, .exam-strip h2, .modal-header h2 { font-weight: 600; }
+.time-row, .day-name, .course-block strong { font-weight: 600; }
+.legend, .schedule-footer, .schedule-footer button { font-weight: 500; }
+.field > span, .day-picker legend, .persian-exam > span, .day-picker button { font-weight: 500; }
+.time-picker select, .persian-date-grid select, .time-picker small, .persian-date-grid small { font-weight: 500; }
+.modal-header p, .exam-chip, .export-menu button > span { font-weight: 500; }
+.persian-date-grid, .persian-date-grid select, .persian-date-grid option, .persian-date-grid small, .exam-date, .exam-chip {
+  font-family: "XB Niloofar", serif;
+  font-weight: 400;
+}
+.persian-date-grid select { font-size: 19px; }
+.persian-date-grid small { font-size: 15px; line-height: 1.2; }
+.exam-date b { font-size: 21px; font-weight: 400; }
+.exam-date small { font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.exam-chip { font-size: 15px; line-height: 1.15; }
 
 @media (max-width: 1050px) {
   .page-content { padding-inline: 26px; }

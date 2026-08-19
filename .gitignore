@@ -22,6 +22,7 @@
 .DS_Store
 *.pem
 *.tsbuildinfo
+/Niloofar/
 
 # debug
 npm-debug.log*
