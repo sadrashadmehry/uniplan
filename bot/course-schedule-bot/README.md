@@ -15,7 +15,8 @@ Copy-Item bot/course-schedule-bot/.env.example bot/course-schedule-bot/.env # on
 Edit the bot's `.env`: set `TELEGRAM_BOT_TOKEN`, `AION_API_KEY`, and an exact
 `AION_MODEL` available to your Aion account. Old `ANTHROPIC_*` settings are
 not used. The API endpoint is `https://api.aionlabs.ai/v1`.
-Use `FONT_PATH=../../public/fonts/xb-niloofar.ttf` for the bundled Persian font.
+Set `SCHEDULE_EXPORT_TOKEN` to the same secret as the website. The website
+must be running and its Chromium browser installed (see the root README).
 Paths are relative to this bot directory regardless of the working directory.
 
 ```powershell
@@ -23,7 +24,7 @@ Paths are relative to this bot directory regardless of the working directory.
 .\.venv\Scripts\python.exe bot/course-schedule-bot/run.py
 ```
 
-`--check` validates local configuration, imports, font presence and SQLite
+`--check` validates local configuration, imports and SQLite
 initialization. It does not validate remote credentials or send messages.
 Run just one polling process per bot token. In Telegram: `/start`, upload a
 text timetable PDF, then request course changes. Course names and units come
@@ -33,6 +34,9 @@ Prerequisites/corequisites are recorded but cannot establish eligibility
 without the student's completed-course history.
 Supported changes: include, exclude, lock/unlock, change units, regenerate.
 Day avoidance and specific section selection are not implemented.
+The bot always requests the website PNG after planning and sends it through
+Telegram. If rendering fails, the plan is saved; `/export` retries from the
+same constraints without calling Aion. There is no separate local renderer.
 
 ## Offline tests
 

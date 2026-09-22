@@ -7,7 +7,7 @@ import sys
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from bot.config import load_config
-from bot.handlers import BotContext, handle_document, handle_text, start
+from bot.handlers import BotContext, export_schedule, handle_document, handle_text, start
 
 logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
@@ -30,10 +30,11 @@ def main() -> None:
 
     application.add_error_handler(on_error)
     if "--check" in sys.argv:
-        logging.info("Bot configuration, dependencies, font and database are ready (offline check).")
+        logging.info("Bot configuration, dependencies and database are ready (offline check).")
         return
 
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("export", export_schedule))
     application.add_handler(MessageHandler(filters.Document.PDF, handle_document))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 

@@ -43,7 +43,7 @@ class FetchExportedScheduleTests(unittest.TestCase):
     def test_successful_fetch_returns_png_bytes_and_sends_bearer_token(self, mock_urlopen):
         response = MagicMock()
         response.headers = {"Content-Type": "image/png"}
-        response.read.return_value = b"\x89PNG\r\n"
+        response.read.return_value = b"\x89PNG\r\n\x1a\n"
         response.__enter__.return_value = response
         mock_urlopen.return_value = response
 
@@ -51,7 +51,7 @@ class FetchExportedScheduleTests(unittest.TestCase):
             [_offering()], 18, "http://127.0.0.1:3000/api/schedule/export", "secret",
         )
 
-        self.assertEqual(result, b"\x89PNG\r\n")
+        self.assertEqual(result, b"\x89PNG\r\n\x1a\n")
         sent_request = mock_urlopen.call_args[0][0]
         self.assertEqual(sent_request.get_header("Authorization"), "Bearer secret")
         self.assertEqual(sent_request.full_url, "http://127.0.0.1:3000/api/schedule/export")
@@ -66,6 +66,16 @@ class FetchExportedScheduleTests(unittest.TestCase):
 
         with self.assertRaises(WebsiteExportError):
             fetch_exported_schedule([_offering()], 18, "http://127.0.0.1:3000/api/schedule/export", "secret")
+
+    @patch("render.website_export.urllib.request.urlopen")
+    def test_rejects_fake_png_body(self, mock_urlopen):
+        response = MagicMock()
+        response.headers = {"Content-Type": "image/png"}
+        response.read.return_value = b"not a PNG"
+        response.__enter__.return_value = response
+        mock_urlopen.return_value = response
+        with self.assertRaises(WebsiteExportError):
+            fetch_exported_schedule([_offering()], 3, "http://127.0.0.1:3000/api/schedule/export", "secret")
 
     @patch("render.website_export.urllib.request.urlopen")
     def test_http_error_raises_website_export_error(self, mock_urlopen):

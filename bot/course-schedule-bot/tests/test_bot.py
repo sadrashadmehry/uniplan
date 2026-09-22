@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
 from bot.config import Config, load_config
-from bot.handlers import BotContext, handle_document, handle_text
+from bot.handlers import BotContext, export_schedule, handle_document, handle_text
 from bot.session import Session, Stage
 from extraction import extract_courses
 from llm.client import AssistantClient, AssistantReply
@@ -20,11 +20,16 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class BotTests(unittest.TestCase):
+    def setUp(self):
+        self.fetch_patch = patch("bot.handlers.fetch_exported_schedule", return_value=b"\x89PNG\r\n\x1a\n")
+        self.fetch = self.fetch_patch.start()
+        self.addCleanup(self.fetch_patch.stop)
+
     def test_config_is_independent_of_working_directory(self):
         with patch.dict(os.environ, {"TELEGRAM_BOT_TOKEN": "123:test", "AION_API_KEY": "test",
-                                     "AION_MODEL": "test", "FONT_PATH": "../../public/fonts/xb-niloofar.ttf"}, clear=True):
+                                     "AION_MODEL": "test", "SCHEDULE_EXPORT_TOKEN": "test-token"}, clear=True):
             config = load_config()
-            self.assertTrue(config.font_path.is_file())
+            self.assertEqual(config.website_export_token, "test-token")
             self.assertEqual(config.aion_model, "test")
 
     def test_missing_credentials_fail_clearly(self):
@@ -53,7 +58,7 @@ class BotTests(unittest.TestCase):
     def test_units_to_render_and_chat_persistence(self):
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",
-                            ROOT / "public/fonts/xb-niloofar.ttf", 3, 3)
+                            3, 3)
             ctx = BotContext(config)
             session = Session(123, stage=Stage.AWAITING_UNITS,
                               raw_courses=[make_record("A", "Saturday", "08:00", "10:00")])
@@ -77,7 +82,7 @@ class BotTests(unittest.TestCase):
     def test_website_export_used_when_configured(self):
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",
-                            ROOT / "public/fonts/xb-niloofar.ttf", 3, 3,
+                            3, 3,
                             website_export_url="http://127.0.0.1:3000/api/schedule/export",
                             website_export_token="secret")
             ctx = BotContext(config)
@@ -89,23 +94,17 @@ class BotTests(unittest.TestCase):
             update = SimpleNamespace(effective_chat=SimpleNamespace(id=789), message=message)
             context = SimpleNamespace(bot_data={"bot_ctx": ctx})
             ctx.assistant.chat = Mock(return_value=AssistantReply("ok", [{"action": "regenerate"}]))
-            with patch("bot.handlers.fetch_exported_schedule", return_value=b"\x89PNG") as mock_fetch, \
-                 patch("bot.handlers.render_schedule") as mock_local:
+            with patch("bot.handlers.fetch_exported_schedule", return_value=b"\x89PNG") as mock_fetch:
                 asyncio.run(handle_text(update, context))
             mock_fetch.assert_called_once()
-            mock_local.assert_not_called()
             message.reply_photo.assert_awaited_once()
             ctx.store._conn.close()
             ctx.assistant._client.close()
 
-    def test_website_export_failure_falls_back_to_local_render(self):
-        def fake_render(selection, font_path, output_path):
-            output_path.write_bytes(b"\x89PNG")
-            return output_path
-
+    def test_export_failure_keeps_plan_and_command_retries_without_model(self):
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",
-                            ROOT / "public/fonts/xb-niloofar.ttf", 3, 3,
+                            3, 3,
                             website_export_url="http://127.0.0.1:3000/api/schedule/export",
                             website_export_token="secret")
             ctx = BotContext(config)
@@ -117,13 +116,17 @@ class BotTests(unittest.TestCase):
             update = SimpleNamespace(effective_chat=SimpleNamespace(id=790), message=message)
             context = SimpleNamespace(bot_data={"bot_ctx": ctx})
             ctx.assistant.chat = Mock(return_value=AssistantReply("ok", [{"action": "regenerate"}]))
-            with patch("bot.handlers.fetch_exported_schedule", side_effect=WebsiteExportError("boom")), \
-                 patch("bot.handlers.render_schedule", side_effect=fake_render) as mock_local:
+            with patch("bot.handlers.fetch_exported_schedule", side_effect=WebsiteExportError("boom")):
                 asyncio.run(handle_text(update, context))
-            mock_local.assert_called_once()
-            message.reply_photo.assert_awaited_once()
+            message.reply_photo.assert_not_awaited()
+            self.assertTrue(ctx.load_session(790).current_selection)
             sent_texts = [call.args[0] for call in message.reply_text.await_args_list if call.args]
-            self.assertTrue(any("ساده‌تر" in text for text in sent_texts))
+            self.assertTrue(any("/export" in text for text in sent_texts))
+            ctx.assistant.chat.reset_mock()
+            asyncio.run(export_schedule(update, context))
+            ctx.assistant.chat.assert_not_called()
+            message.reply_photo.assert_awaited_once()
+            self.assertEqual(message.reply_photo.call_args.kwargs["photo"].getvalue(), b"\x89PNG\r\n\x1a\n")
             ctx.store._conn.close()
             ctx.assistant._client.close()
 
@@ -135,7 +138,7 @@ class BotTests(unittest.TestCase):
         from services.course_extractor.catalog import enrich_course
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",
-                            ROOT / "public/fonts/xb-niloofar.ttf", 3, 3)
+                            3, 3)
             ctx = BotContext(config)
             ctx.assistant.parse_units = Mock(side_effect=AssertionError("Must not ask for units"))
             known = enrich_course(make_record("برنامهسازی پیشرفت ه", "Saturday", "08:00", "10:00"))

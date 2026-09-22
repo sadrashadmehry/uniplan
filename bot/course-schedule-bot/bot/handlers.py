@@ -17,7 +17,6 @@ from telegram.ext import ContextTypes
 
 from extraction import extract_courses
 from llm.client import AssistantClient
-from render.schedule_image import render_schedule
 from render.website_export import WebsiteExportError, fetch_exported_schedule
 from scheduler.engine import group_raw_courses, solve_schedule
 from scheduler.models import Course, SectionOffering
@@ -140,16 +139,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def _finalize_schedule(
     update: Update, session: Session, bot_ctx: BotContext
 ) -> None:
-    """Plan the schedule and show it to the student.
-
-    Planning (which courses/sections make a conflict-free, in-range
-    schedule) always happens here, in `scheduler.engine` -- never in the
-    model and never on the website. Rendering the picture is the website's
-    job (`POST /api/schedule/export`); this function only hands the
-    website the planned selection and relays back whatever image it
-    returns. If the website can't be reached, it falls back to the bot's
-    own plainer local renderer rather than sending nothing.
-    """
+    """Validate/solve the plan, then always request the website's PNG."""
     courses: list[Course] = group_raw_courses(session.raw_courses, session.units_map)
     schedule = solve_schedule(
         courses,
@@ -172,37 +162,22 @@ async def _finalize_schedule(
         return
 
     caption = f"برنامه‌ی پیشنهادی — مجموع {schedule.total_units} واحد"
-    export_failed = False
-
-    if bot_ctx.config.website_export_token:
-        try:
-            image_bytes = await asyncio.to_thread(
-                fetch_exported_schedule,
-                schedule.selected,
-                schedule.total_units,
-                bot_ctx.config.website_export_url,
-                bot_ctx.config.website_export_token,
-            )
-            await update.message.reply_photo(photo=io.BytesIO(image_bytes), caption=caption)
-        except WebsiteExportError:
-            logger.exception("Website schedule export failed; falling back to local renderer")
-            export_failed = True
-
-    # Local fallback: either the website isn't configured yet, or it just failed.
-    if not bot_ctx.config.website_export_token or export_failed:
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            image_path = await asyncio.to_thread(
-                render_schedule,
-                schedule.selected,
-                font_path=bot_ctx.config.font_path,
-                output_path=Path(tmp_dir) / "schedule.png",
-            )
-            with image_path.open("rb") as photo_file:
-                await update.message.reply_photo(photo=photo_file, caption=caption)
-        if export_failed:
-            await update.message.reply_text(
-                "چون سرویس تصویر سایت موقتاً در دسترس نبود، نسخه‌ی ساده‌تر نمایش داده شد."
-            )
+    try:
+        image_bytes = await asyncio.to_thread(
+            fetch_exported_schedule,
+            schedule.selected,
+            schedule.total_units,
+            bot_ctx.config.website_export_url,
+            bot_ctx.config.website_export_token,
+        )
+    except WebsiteExportError:
+        logger.warning("Website schedule export failed")
+        await update.message.reply_text(
+            "برنامه ذخیره شد، ولی خروجی تصویر سایت فعلاً در دسترس نیست. "
+            "برای تلاش دوباره /export را بفرست."
+        )
+        return
+    await update.message.reply_photo(photo=io.BytesIO(image_bytes), caption=caption)
 
     if schedule.warnings:
         await update.message.reply_text("توجه:\n" + "\n".join(f"- {w}" for w in schedule.warnings))
@@ -210,6 +185,16 @@ async def _finalize_schedule(
         "اگر می‌خوای تغییری بدی (مثلاً حذف یا اضافه‌کردن یک درس، یا تغییر تعداد واحد)، "
         "همین‌جا برام بنویس."
     )
+
+
+async def export_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Retry rendering from persisted constraints without asking the model."""
+    bot_ctx: BotContext = context.bot_data["bot_ctx"]
+    session = bot_ctx.load_session(update.effective_chat.id)
+    if session.stage != Stage.READY:
+        await update.message.reply_text("اول فایل برنامه‌ی هفتگی را بفرست.")
+        return
+    await _finalize_schedule(update, session, bot_ctx)
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

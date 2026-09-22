@@ -1,7 +1,7 @@
 """Client for the website's `POST /api/schedule/export` endpoint.
 
 The website owns what a rendered schedule looks like (see
-`app/api/schedule/export/route.tsx` at the repository root); the bot's job
+`app/api/schedule/export/route.ts` at the repository root); the bot's job
 is only to plan the schedule (see `scheduler.engine`) and hand the result
 to the website for rendering. This module does the handing-off: it turns a
 solved schedule into the website's request shape, calls it over HTTP, and
@@ -23,8 +23,7 @@ from scheduler.models import SectionOffering
 class WebsiteExportError(Exception):
     """Raised when the website could not produce an exported schedule image.
 
-    Callers should treat this as recoverable -- e.g. fall back to a local
-    renderer -- rather than letting it propagate to the user as a crash.
+    Keep the plan and let the user retry; never substitute a different renderer.
     """
 
 
@@ -50,7 +49,7 @@ def fetch_exported_schedule(
     total_units: int | None,
     base_url: str,
     token: str,
-    timeout: float = 20.0,
+    timeout: float = 35.0,
 ) -> bytes:
     """POST the selected schedule to the website and return PNG bytes.
 
@@ -77,17 +76,17 @@ def fetch_exported_schedule(
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             content_type = response.headers.get("Content-Type", "")
-            body = response.read()
+            body = response.read(10 * 1024 * 1024 + 1)
     except urllib.error.HTTPError as error:
-        detail = error.read().decode("utf-8", errors="replace")[:500]
+        detail = error.read(500).decode("utf-8", errors="replace")
         raise WebsiteExportError(f"Website returned HTTP {error.code}: {detail}") from error
     except urllib.error.URLError as error:
         raise WebsiteExportError(f"Could not reach the website: {error.reason}") from error
     except TimeoutError as error:
         raise WebsiteExportError("The website took too long to respond.") from error
 
-    if "image/" not in content_type:
+    if content_type.split(";", 1)[0].strip().lower() != "image/png":
         raise WebsiteExportError(f"Website did not return an image (Content-Type: {content_type!r}).")
-    if not body:
-        raise WebsiteExportError("Website returned an empty image.")
+    if len(body) > 10 * 1024 * 1024 or not body.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise WebsiteExportError("Website returned invalid or oversized PNG data.")
     return body

@@ -67,3 +67,6 @@ venv/
 *.orig
 *.rej
 /tmp/
+
+# Local Chromium installation for export verification
+.playwright-browsers/
