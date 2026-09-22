@@ -1,0 +1,1205 @@
+{
+  "source": "reference/ممهور_شده_مهندسی_کامپیوتر.pdf",
+  "sourceDocument": "AUT-CEIT-UG-PR-95-001V06",
+  "courses": [
+    {
+      "code": "CE101",
+      "name": "مبانی کامپیوتر و برنامه سازی",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [
+        "کارگاه مبانی کامپیوتر و برنامه سازی"
+      ],
+      "requirementNotes": "",
+      "aliases": [
+        "مبانی کامپیوتر و برنامه نویسی"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE102",
+      "name": "کارگاه مبانی کامپیوتر و برنامه سازی",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "مبانی کامپیوتر و برنامه سازی"
+      ],
+      "requirementNotes": "",
+      "aliases": [
+        "کارگاه مبانی کامپیوتر و برنامه نویسی"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE103",
+      "name": "ریاضیات گسسته",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 1",
+        "مبانی کامپیوتر و برنامه سازی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE104",
+      "name": "برنامه سازی پیشرفته",
+      "units": 3,
+      "prerequisites": [
+        "مبانی کامپیوتر و برنامه سازی"
+      ],
+      "corequisites": [
+        "کارگاه برنامه سازی پیشرفته"
+      ],
+      "requirementNotes": "",
+      "aliases": [
+        "برنامه نویسی پیشرفته"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE105",
+      "name": "کارگاه برنامه سازی پیشرفته",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "برنامه سازی پیشرفته"
+      ],
+      "requirementNotes": "",
+      "aliases": [
+        "کارگاه برنامه نویسی پیشرفته"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE201",
+      "name": "مدارهای منطقی",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [
+        "ریاضیات گسسته",
+        "آزمایشگاه مدارهای منطقی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE202",
+      "name": "آزمایشگاه مدارهای منطقی",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "مدارهای منطقی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE203",
+      "name": "ساختمان داده ها و الگوریتم ها",
+      "units": 3,
+      "prerequisites": [
+        "ریاضیات گسسته",
+        "برنامه سازی پیشرفته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "داده ساختارها و الگوریتم ها"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE204",
+      "name": "مدارهای الکتریکی و الکترونیکی",
+      "units": 3,
+      "prerequisites": [
+        "فیزیک 2"
+      ],
+      "corequisites": [
+        "معادلات دیفرانسیل",
+        "آزمایشگاه مدارهای الکتریکی و الکترونیکی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 15
+    },
+    {
+      "code": "CE205",
+      "name": "آزمایشگاه مدارهای الکتریکی و الکترونیکی",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "مدارهای الکتریکی و الکترونیکی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE206",
+      "name": "زبان تخصصی",
+      "units": 2,
+      "prerequisites": [
+        "زبان انگلیسی 2"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE207",
+      "name": "معماری کامپیوتر",
+      "units": 3,
+      "prerequisites": [
+        "مدارهای منطقی"
+      ],
+      "corequisites": [
+        "آزمایشگاه معماری کامپیوتر"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE208",
+      "name": "آزمایشگاه معماری کامپیوتر",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "معماری کامپیوتر"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE209",
+      "name": "نظریه زبان ها و ماشین ها",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE210",
+      "name": "جبر خطی کاربردی",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 2"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE301",
+      "name": "ریزپردازنده و زبان اسمبلی",
+      "units": 3,
+      "prerequisites": [
+        "معماری کامپیوتر"
+      ],
+      "corequisites": [
+        "آزمایشگاه ریزپردازنده و زبان اسمبلی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE302",
+      "name": "آزمایشگاه ریزپردازنده و زبان اسمبلی",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "ریزپردازنده و زبان اسمبلی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE303",
+      "name": "سیستم های عامل",
+      "units": 3,
+      "prerequisites": [
+        "معماری کامپیوتر"
+      ],
+      "corequisites": [
+        "آزمایشگاه سیستم های عامل"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE304",
+      "name": "آزمایشگاه سیستم های عامل",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "سیستم های عامل"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE305",
+      "name": "شبکه های کامپیوتری",
+      "units": 3,
+      "prerequisites": [
+        "آمار و احتمال مهندسی",
+        "معماری کامپیوتر"
+      ],
+      "corequisites": [
+        "سیستم های عامل",
+        "آزمایشگاه شبکه های کامپیوتری"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE306",
+      "name": "آزمایشگاه شبکه های کامپیوتری",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [
+        "شبکه های کامپیوتری"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE307",
+      "name": "مهندسی نرم افزار 1",
+      "units": 3,
+      "prerequisites": [
+        "برنامه سازی پیشرفته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 16
+    },
+    {
+      "code": "CE308",
+      "name": "روش پژوهش و ارائه",
+      "units": 2,
+      "prerequisites": [
+        "زبان تخصصی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "نیمسال 5 و بالاتر",
+      "aliases": [],
+      "sourcePage": 17
+    },
+    {
+      "code": "CE309",
+      "name": "کارآموزی",
+      "units": 1,
+      "prerequisites": [
+        "روش پژوهش و ارائه"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 17
+    },
+    {
+      "code": "CE401",
+      "name": "پروژه پایانی",
+      "units": 3,
+      "prerequisites": [
+        "روش پژوهش و ارائه"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 17
+    },
+    {
+      "code": "CE221",
+      "name": "طراحی الگوریتم ها",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها",
+        "ریاضیات گسسته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE231",
+      "name": "اصول طراحی پایگاه داده ها",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "پایگاه داده"
+      ],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE232",
+      "name": "اصول طراحی کامپایلر",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE233",
+      "name": "زبان های برنامه نویسی",
+      "units": 3,
+      "prerequisites": [
+        "نظریه زبان ها و ماشین ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "طراحی زبان های برنامه سازی"
+      ],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE331",
+      "name": "مهندسی نرم افزار 2",
+      "units": 3,
+      "prerequisites": [
+        "مهندسی نرم افزار 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE431",
+      "name": "آزمون نرم افزار",
+      "units": 3,
+      "prerequisites": [
+        "مهندسی نرم افزار 2"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE432",
+      "name": "طراحی واسط کاربر",
+      "units": 3,
+      "prerequisites": [
+        "مهندسی نرم افزار 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE421",
+      "name": "بازیابی اطلاعات",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها",
+        "آمار و احتمال مهندسی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 18
+    },
+    {
+      "code": "CE222",
+      "name": "سیگنال ها و سیستم ها",
+      "units": 3,
+      "prerequisites": [
+        "معادلات دیفرانسیل"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE241",
+      "name": "طراحی مدارهای واسط",
+      "units": 3,
+      "prerequisites": [
+        "ریزپردازنده و زبان اسمبلی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE242",
+      "name": "طراحی سیستم های دیجیتال برنامه پذیر",
+      "units": 3,
+      "prerequisites": [
+        "معماری کامپیوتر"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "طراحی سیستم های دیجیتال"
+      ],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE243",
+      "name": "الکترونیک دیجیتال",
+      "units": 3,
+      "prerequisites": [
+        "مدارهای الکتریکی و الکترونیکی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE341",
+      "name": "سیستم های نهفته و بی درنگ",
+      "units": 3,
+      "prerequisites": [
+        "سیستم های عامل",
+        "ریزپردازنده و زبان اسمبلی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE342",
+      "name": "برنامه نویسی چند هسته ای",
+      "units": 3,
+      "prerequisites": [
+        "سیستم های عامل"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE422",
+      "name": "مبانی رایانش ابری",
+      "units": 3,
+      "prerequisites": [
+        "شبکه های کامپیوتری",
+        "سیستم های عامل"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE441",
+      "name": "طراحی توأم سخت افزار و نرم افزار",
+      "units": 3,
+      "prerequisites": [
+        "معماری کامپیوتر"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 19
+    },
+    {
+      "code": "CE251",
+      "name": "مبانی و کاربردهای هوش مصنوعی",
+      "units": 3,
+      "prerequisites": [
+        "ساختمان داده ها و الگوریتم ها"
+      ],
+      "corequisites": [
+        "جبر خطی کاربردی"
+      ],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 20
+    },
+    {
+      "code": "CE351",
+      "name": "مبانی هوش محاسباتی",
+      "units": 3,
+      "prerequisites": [
+        "طراحی الگوریتم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 20
+    },
+    {
+      "code": "CE352",
+      "name": "اصول علم ربات",
+      "units": 3,
+      "prerequisites": [
+        "سیگنال ها و سیستم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 20
+    },
+    {
+      "code": "CE451",
+      "name": "مقدمه ای بر بیوانفورماتیک",
+      "units": 3,
+      "prerequisites": [
+        "مبانی هوش محاسباتی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "مبانی بیوانفورماتیک"
+      ],
+      "sourcePage": 20
+    },
+    {
+      "code": "CE452",
+      "name": "داده کاوی",
+      "units": 3,
+      "prerequisites": [
+        "مبانی هوش محاسباتی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 20
+    },
+    {
+      "code": "CE261",
+      "name": "برنامه نویسی وب",
+      "units": 3,
+      "prerequisites": [
+        "شبکه های کامپیوتری"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE361",
+      "name": "انتقال داده ها",
+      "units": 3,
+      "prerequisites": [
+        "شبکه های کامپیوتری",
+        "سیگنال ها و سیستم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE362",
+      "name": "مبانی امنیت اطلاعات",
+      "units": 3,
+      "prerequisites": [
+        "شبکه های کامپیوتری"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE363",
+      "name": "سیستم های چند رسانه ای",
+      "units": 3,
+      "prerequisites": [
+        "آمار و احتمال مهندسی",
+        "سیگنال ها و سیستم ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE364",
+      "name": "برنامه نویسی دستگاه های سیار",
+      "units": 3,
+      "prerequisites": [
+        "برنامه سازی پیشرفته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "برنامه سازی موبایل"
+      ],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE461",
+      "name": "مبانی اینترنت اشیا",
+      "units": 3,
+      "prerequisites": [
+        "ریزپردازنده و زبان اسمبلی",
+        "شبکه های کامپیوتری"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [
+        "مبانی اینترنت اشیاء"
+      ],
+      "sourcePage": 21
+    },
+    {
+      "code": "CE371",
+      "name": "گرافیک کامپیوتری",
+      "units": 3,
+      "prerequisites": [
+        "برنامه سازی پیشرفته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE372",
+      "name": "تعامل انسان و کامپیوتر",
+      "units": 3,
+      "prerequisites": [
+        "مهندسی نرم افزار 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE373",
+      "name": "کارگاه ساخت ربات",
+      "units": 1,
+      "prerequisites": [
+        "اصول علم ربات"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE374",
+      "name": "طراحی بازی های کامپیوتری",
+      "units": 3,
+      "prerequisites": [
+        "برنامه سازی پیشرفته"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE375",
+      "name": "نظریه محاسبات",
+      "units": 3,
+      "prerequisites": [
+        "نظریه زبان ها و ماشین ها"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE376",
+      "name": "شبیه سازی کامپیوتری",
+      "units": 3,
+      "prerequisites": [
+        "سیستم های عامل",
+        "آمار و احتمال مهندسی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE377",
+      "name": "مبانی پویانمایی کامپیوتری",
+      "units": 3,
+      "prerequisites": [
+        "گرافیک کامپیوتری"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE378",
+      "name": "مدیریت پروژه فناوری اطلاعات",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE379",
+      "name": "تجارت الکترونیکی",
+      "units": 2,
+      "prerequisites": [
+        "اقتصاد مهندسی",
+        "شبکه های کامپیوتری"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE380",
+      "name": "توسعه کسب و کار نوپا",
+      "units": 3,
+      "prerequisites": [
+        "مهندسی نرم افزار 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE381",
+      "name": "سیستم های اتوماسیون صنعتی",
+      "units": 3,
+      "prerequisites": [
+        "ریزپردازنده و زبان اسمبلی"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE382",
+      "name": "مباحث ویژه 1",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": "CE383",
+      "name": "مباحث ویژه 2",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": null,
+      "name": "کنترل خطی",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": null,
+      "name": "اقتصاد مهندسی",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 22
+    },
+    {
+      "code": null,
+      "name": "کنترل پروژه",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 23
+    },
+    {
+      "code": null,
+      "name": "نظریه گراف",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 23
+    },
+    {
+      "code": null,
+      "name": "محاسبات عددی",
+      "units": 2,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 23
+    },
+    {
+      "code": null,
+      "name": "ریاضی عمومی 1",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "ریاضی عمومی 2",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "فیزیک 1",
+      "units": 3,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "فیزیک 2",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "معادلات دیفرانسیل",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 1"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "آمار و احتمال مهندسی",
+      "units": 3,
+      "prerequisites": [
+        "ریاضی عمومی 2"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "آزمایشگاه فیزیک 2",
+      "units": 1,
+      "prerequisites": [
+        "فیزیک 2"
+      ],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "کارگاه عمومی یا کارگاه برق",
+      "units": 1,
+      "prerequisites": [],
+      "corequisites": [],
+      "requirementNotes": "",
+      "aliases": [],
+      "sourcePage": 14
+    },
+    {
+      "code": null,
+      "name": "اندیشه اسلامی 1 (مبدأ و معاد)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [
+        "اندیشه اسلامی 1"
+      ],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "اندیشه اسلامی 2 (نبوت و امامت)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [
+        "اندیشه اسلامی 2"
+      ],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "انسان در اسلام",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "حقوق اجتماعی و سیاسی در اسلام",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "فلسفه اخلاق (با تکیه بر مباحث تربیتی)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "اخلاق اسلامی (مبانی و مفاهیم)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "آیین زندگی (اخلاق کاربردی)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "عرفان عملی در اسلام",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "اخلاق مهندسی",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "انقلاب اسلامی ایران",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "آشنایی با قانون اساسی جمهوری اسلامی ایران",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "اندیشه سیاسی امام خمینی (ره)",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تاریخ فرهنگ و تمدن اسلامی",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تاریخ تحلیلی صدر اسلام",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تاریخ امامت",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تفسیر موضوعی قرآن",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تفسیر موضوعی نهج البلاغه",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "زبان فارسی",
+      "units": 3,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "زبان انگلیسی 1",
+      "units": 1,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "زبان انگلیسی 2",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تربیت بدنی 1",
+      "units": 1,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "تربیت بدنی 2",
+      "units": 1,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    },
+    {
+      "code": null,
+      "name": "دانش خانواده و جمعیت",
+      "units": 2,
+      "prerequisites": null,
+      "corequisites": null,
+      "requirementNotes": "پیش نیاز و هم نیاز در جدول عمومی ذکر نشده است.",
+      "aliases": [],
+      "sourcePage": 13
+    }
+  ]
+}

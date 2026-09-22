@@ -1,0 +1,24 @@
+[Unit]
+Description=UniPlan Telegram course schedule bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=uniplan
+Group=uniplan
+WorkingDirectory=/opt/uniplan/bot/course-schedule-bot
+EnvironmentFile=/etc/uniplan-bot.env
+Environment=DATABASE_PATH=/var/lib/uniplan-bot/sessions.db
+StateDirectory=uniplan-bot
+ExecStart=/opt/uniplan/.venv/bin/python /opt/uniplan/bot/course-schedule-bot/run.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

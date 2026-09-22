@@ -1,1 +1,0 @@
-ALTER TABLE `courses` ADD `track_name` text DEFAULT '' NOT NULL;

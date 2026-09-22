@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(baseUrl),
     title,
     description,
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    icons: { icon: "/uniplan-logo.png", shortcut: "/uniplan-logo.png" },
     openGraph: {
       title,
       description,

@@ -1,0 +1,16 @@
+# Telegram bot framework (async). Confirmed against v22.8 docs.
+python-telegram-bot==22.8
+
+# PDF parsing -- used by the extraction script you supplied.
+-r ../../services/course_extractor/requirements.txt
+
+# Aion uses the OpenAI-compatible chat completions API.
+openai>=1.55,<3
+
+# Weekly-schedule image rendering.
+Pillow>=11,<12
+arabic-reshaper==3.0.0
+python-bidi==0.4.2
+
+# Loads TELEGRAM_BOT_TOKEN / AION_API_KEY etc. from a local .env file.
+python-dotenv==1.0.1

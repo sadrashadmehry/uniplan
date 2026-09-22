@@ -1,0 +1,17 @@
+# Secrets -- never commit your real tokens/keys
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Runtime data
+data/*.db
+data/*.pdf
+*.log
+
+# Fonts you download locally (not redistributed with this repo)
+render/fonts/*.ttf
+render/fonts/*.otf

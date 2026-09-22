@@ -1,7 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
+/.npm-cache/
+.venv/
 /.pnp
 .pnp.*
 .yarn/*
@@ -14,7 +16,7 @@
 /coverage
 
 # next.js
-/.next/
+.next/
 /.vinext/
 /out/
 
@@ -32,6 +34,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,3 +43,27 @@ yarn-error.log*
 /.wrangler/
 /outputs/
 /work/
+
+# Historical snapshots; the root project is canonical.
+/newversion/
+*.zip
+__pycache__/
+*.pyc
+
+# Local environments, caches, session data and integration leftovers
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.log
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+/patches/
+*_backup.*
+*.bak
+*.orig
+*.rej
+/tmp/

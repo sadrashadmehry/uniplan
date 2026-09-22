@@ -1,0 +1,46 @@
+[Unit]
+Description=UniPlan isolated course PDF extractor
+After=network.target
+
+[Service]
+Type=simple
+User=uniplan
+Group=uniplan
+WorkingDirectory=/opt/uniplan/services/course_extractor
+Environment=COURSE_EXTRACTOR_HOST=127.0.0.1
+Environment=COURSE_EXTRACTOR_PORT=8010
+Environment=REQUIRE_QPDF=true
+EnvironmentFile=/etc/uniplan.env
+ExecStart=/opt/uniplan/.venv/bin/python /opt/uniplan/services/course_extractor/server.py
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0077
+LimitNOFILE=128
+TasksMax=32
+MemoryMax=1G
+CPUQuota=150%
+
+[Install]
+WantedBy=multi-user.target
