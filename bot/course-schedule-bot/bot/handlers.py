@@ -206,6 +206,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         await update.message.reply_text("برای شروع، فایل PDF برنامه‌ی هفتگیت رو برام بفرست.")
         return
 
+    if len(text) > 1500:
+        await update.message.reply_text("لطفاً هر پیام را به ۱۵۰۰ کاراکتر محدود کن؛ درخواستت را در چند پیام بفرست.")
+        return
+
     if session.stage == Stage.AWAITING_UNITS:
         course_names = _unique_course_names(session.raw_courses)
         parsed = await asyncio.to_thread(bot_ctx.assistant.parse_units, course_names, text)
@@ -228,6 +232,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         session.current_selection,
         session.history,
         text,
+        {"locked": session.locked_courses, "excluded": session.excluded_courses,
+         "units": session.units_map, "unit_range": [bot_ctx.config.min_units, bot_ctx.config.max_units]},
     )
     session.remember("user", text)
     changed = False

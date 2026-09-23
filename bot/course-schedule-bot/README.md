@@ -70,3 +70,25 @@ outbound HTTPS to Telegram and Aion; no public inbound bot port is needed.
 Stop local polling before starting the server. Back up the session database
 before upgrades. Rotate any Telegram token previously placed in an example
 file through BotFather; archives may still contain that old token.
+
+## Model token budget
+
+Aion returns short Persian text and validated course actions. The local solver
+selects a conflict-free schedule; code exports it through the website. Initial
+PDF scheduling and `/export` make no model calls.
+
+Defaults: `AION_MAX_OUTPUT_TOKENS=512` (previously 1024 for chat) and
+`AION_REASONING_EFFORT=none` for Aion 2.0/3.0/3.0 Mini. Other model IDs omit
+this unsupported option. Disabling reasoning can reduce interpretation quality;
+set the effort explicitly if needed. Aion treats low/medium/high/max as reasoning
+on, and reasoning shares the output budget with the answer.
+See [Aion API reference](https://api.aionlabs.ai/docs/api-reference/).
+
+Requests use deduplicated course metadata, compact JSON, current constraints,
+and at most four previous messages within 3000 UTF-8 bytes. User messages over
+1500 characters and assembled input over 24000 UTF-8 bytes are rejected before
+billing; the byte guard is not an exact token count. No catalog is silently
+truncated. Malformed or length-limited responses never change the schedule.
+Automatic SDK retries are disabled to avoid repeating potentially billed calls.
+Restart the bot after changing environment settings. These are per-request
+limits, not an account-wide spending limit.

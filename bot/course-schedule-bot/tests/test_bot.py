@@ -55,6 +55,35 @@ class BotTests(unittest.TestCase):
         self.assertEqual(client.chat([], [], [], "hello").actions, [])
         client._client.close()
 
+    def test_model_budget_and_truncation(self):
+        with patch.dict(os.environ, {"AION_MAX_OUTPUT_TOKENS": "512", "AION_REASONING_EFFORT": "none"}):
+            client = AssistantClient("test", "aion-labs/aion-3.0-mini")
+        self.addCleanup(client._client.close)
+        create = Mock(return_value=SimpleNamespace(choices=[SimpleNamespace(
+            finish_reason="stop", message=SimpleNamespace(content='{"reply":"ok","actions":[]}'))]))
+        client._client.chat.completions.create = create
+        course = {"name": "A", "units": 3, "days": ["Saturday"], "startTime": "08:00", "endTime": "10:00"}
+        history = [{"role": "user", "content": str(i)} for i in range(10)]
+        client.chat([course] * 20, [{"name": "A"}], history, "hello", {"locked": ["A"]})
+        args = create.call_args.kwargs
+        self.assertEqual(args["max_tokens"], 512)
+        self.assertEqual(args["reasoning_effort"], "none")
+        self.assertEqual(len(args["messages"]), 7)
+        context = json.loads(args["messages"][1]["content"])
+        self.assertEqual(len(context["courses"]), 1)
+        self.assertEqual(len(context["courses"][0]["offerings"]), 1)
+        self.assertEqual(context["state"]["locked"], ["A"])
+        create.reset_mock()
+        self.assertFalse(client.chat([], [], [], "x" * 1501).actions)
+        self.assertFalse(client.chat([{"name": "x" * 24000}], [], [], "hi").actions)
+        create.assert_not_called()
+        create.return_value.choices[0].finish_reason = "length"
+        create.return_value.choices[0].message.content = '{"reply":"ok","actions":[{"action":"regenerate"}]}'
+        self.assertFalse(client.chat([], [], [], "hi").actions)
+        client._model = "older-model"
+        client.chat([], [], [], "hi")
+        self.assertNotIn("reasoning_effort", create.call_args.kwargs)
+
     def test_units_to_render_and_chat_persistence(self):
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",
