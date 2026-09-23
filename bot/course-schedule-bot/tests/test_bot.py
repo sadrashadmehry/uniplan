@@ -84,6 +84,34 @@ class BotTests(unittest.TestCase):
         client.chat([], [], [], "hi")
         self.assertNotIn("reasoning_effort", create.call_args.kwargs)
 
+    def test_incomplete_response_recovers_once(self):
+        with patch.dict(os.environ, {"AION_MAX_OUTPUT_TOKENS": "2048", "AION_REASONING_EFFORT": "low"}):
+            client = AssistantClient("test", "aion-labs/aion-3.0-mini")
+        self.addCleanup(client._client.close)
+        def response(text, reason="stop"):
+            return SimpleNamespace(choices=[SimpleNamespace(finish_reason=reason,
+                message=SimpleNamespace(content=text))])
+        good = response('{"reply":"ok","actions":[{"action":"include_course","course":"A"}]}')
+        create = Mock(side_effect=[response('', 'length'), good])
+        client._client.chat.completions.create = create
+        result = client.chat([{"name":"A"}], [], [], "include A")
+        self.assertEqual(result.actions, [{"action":"include_course","course":"A"}])
+        self.assertEqual([c.kwargs['max_tokens'] for c in create.call_args_list], [2048, 4096])
+        self.assertEqual(create.call_args.kwargs['reasoning_effort'], 'low')
+        create.reset_mock(side_effect=True)
+        create.side_effect = [response('not JSON'), good]
+        self.assertEqual(client.chat([{"name":"A"}], [], [], "include A").reply, 'ok')
+        self.assertEqual(create.call_count, 2)
+        create.reset_mock(side_effect=True)
+        create.return_value = response('not JSON')
+        self.assertEqual(client.chat([], [], [], "hi").actions, [])
+        self.assertEqual(create.call_count, 2)
+        create.reset_mock(side_effect=True)
+        create.side_effect = [response('', 'length'), response('{"units":{"A":3}}')]
+        self.assertEqual(client.parse_units(['A'], 'A 3'), {'A':3})
+        self.assertEqual(create.call_count, 2)
+        self.assertEqual(client._extract_json('<think>{draft}</think>```json\n{"reply":"ok","actions":[]}\n```')['reply'], 'ok')
+
     def test_units_to_render_and_chat_persistence(self):
         with TemporaryDirectory() as directory:
             config = Config("123:test", "test", "test", Path(directory) / "sessions.db",

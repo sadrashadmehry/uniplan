@@ -26,3 +26,13 @@ ranges and overlaps; allows two render processes per Next.js process; and
 closes each browser after success, failure or its rendering deadline. Render
 pages never navigate or make outbound requests. User text is canvas data,
 not HTML or script. Browser installation belongs to the website deployment.
+
+## Complete model responses
+
+The default completion budget is now 2048 tokens with reasoning enabled (`low`
+on supported Aion models). Compact input and bounded history remain. A single
+bounded recovery request handles truncated or invalid structured output, with
+at least 4096 and at most 8192 tokens. No actions from the failed attempt are
+applied. Metadata-only rejection logs distinguish truncation from invalid JSON.
+See the bot README for environment migration and maximum per-message cost.
+Website rendering still runs entirely outside the model.

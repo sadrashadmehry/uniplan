@@ -6,13 +6,16 @@ import json
 import importlib
 import re
 import os
+import logging
 from dataclasses import dataclass, field
 from typing import Any
 
 from . import prompts
 
 SHORTER_REQUEST = "لطفاً درخواستت را کوتاه‌تر و در چند پیام جدا بفرست. برنامه تغییری نکرد."
-INVALID_REPLY = "پاسخ مدل کامل نبود؛ برنامه تغییری نکرد. لطفاً درخواست را کوتاه‌تر تکرار کن."
+INVALID_REPLY = "مدل پس از تلاش دوباره هم پاسخ قابل‌پردازش نداد؛ برنامه تغییری نکرد. لطفاً کمی بعد دوباره تلاش کن."
+
+logger = logging.getLogger(__name__)
 
 JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
 
@@ -34,19 +37,19 @@ class AssistantClient:
 
         self._client = openai.OpenAI(
             api_key=api_key,
-            timeout=45.0,
+            timeout=110.0,
             max_retries=0,
             base_url="https://api.aionlabs.ai/v1",
         )
         self._model = model
-        self._max_tokens = int(os.getenv("AION_MAX_OUTPUT_TOKENS", "512"))
-        if not 128 <= self._max_tokens <= 2048:
-            raise ValueError("AION_MAX_OUTPUT_TOKENS must be between 128 and 2048")
-        self._reasoning = os.getenv("AION_REASONING_EFFORT", "none")
+        self._max_tokens = int(os.getenv("AION_MAX_OUTPUT_TOKENS", "2048"))
+        if not 128 <= self._max_tokens <= 8192:
+            raise ValueError("AION_MAX_OUTPUT_TOKENS must be between 128 and 8192")
+        self._reasoning = os.getenv("AION_REASONING_EFFORT", "low")
         if self._reasoning not in {"none", "low", "medium", "high", "max"}:
             raise ValueError("Invalid AION_REASONING_EFFORT")
 
-    def _complete(self, messages):
+    def _complete(self, messages, *, units=False):
         # UTF-8 bytes bound input size without assuming an incompatible tokenizer.
         # Do not silently drop catalog/state when the budget is exceeded.
         if sum(len(m["content"].encode("utf-8")) for m in messages) > 24000:
@@ -54,12 +57,35 @@ class AssistantClient:
         options = {}
         if self._model.split("/")[-1] in {"aion-2.0", "aion-3.0", "aion-3.0-mini"}:
             options["reasoning_effort"] = self._reasoning
-        return self._client.chat.completions.create(
-            model=self._model, max_tokens=self._max_tokens, messages=messages, **options)
-
+        # One bounded recovery, not an unbounded SDK/network retry loop.
+        for attempt, budget in enumerate((self._max_tokens, min(8192, max(4096, self._max_tokens * 2)))):
+            response = self._client.chat.completions.create(
+                model=self._model, max_tokens=budget, messages=messages, **options)
+            choice = response.choices[0]
+            reason = getattr(choice, "finish_reason", None)
+            problem = "length" if reason == "length" else "invalid_json"
+            try:
+                data = self._extract_json(self._text_of(response))
+                valid = (isinstance(data.get("units"), dict) if units else
+                         isinstance(data.get("reply"), str) and bool(data["reply"].strip())
+                         and isinstance(data.get("actions"), list))
+                if reason in {None, "stop"} and valid:
+                    return response
+                if reason != "length":
+                    problem = "invalid_schema_or_finish"
+            except (ValueError, TypeError):
+                pass
+            usage = getattr(response, "usage", None)
+            logger.warning("Aion response rejected: reason=%s finish=%s budget=%s completion_tokens=%s attempt=%s",
+                           problem, reason, budget, getattr(usage, "completion_tokens", None), attempt + 1)
+            if attempt == 0:
+                messages = [*messages, {"role": "user", "content":
+                    "Return the complete JSON object only, with all required keys. Keep reply brief. No explanation or markdown."}]
+        return response
 
     @staticmethod
     def _extract_json(text: str) -> dict[str, Any]:
+        text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
         match = JSON_OBJECT.search(text)
         if not match:
             raise ValueError(f"The model did not return JSON: {text!r}")
@@ -101,14 +127,14 @@ class AssistantClient:
             {"role": "user", "content": user_message}])
         if response is None:
             return AssistantReply("اطلاعات درس‌ها بیش از حد بزرگ است؛ فایل را به درس‌های موردنیاز محدود کن. برنامه تغییری نکرد.")
-        if getattr(response.choices[0], "finish_reason", None) == "length":
+        if getattr(response.choices[0], "finish_reason", None) not in {None, "stop"}:
             return AssistantReply(INVALID_REPLY)
 
         text = self._text_of(response)
         try:
             data = self._extract_json(text)
             reply = data.get("reply")
-            actions = data.get("actions", [])
+            actions = data.get("actions")
             if not isinstance(reply, str) or not reply.strip() or not isinstance(actions, list):
                 raise ValueError("Invalid assistant response")
             names = {course["name"] for course in course_catalog}
@@ -141,8 +167,8 @@ class AssistantClient:
             return {}
         response = self._complete([
             {"role": "system", "content": prompt},
-            {"role": "user", "content": user_message}])
-        if response is None or getattr(response.choices[0], "finish_reason", None) == "length":
+            {"role": "user", "content": user_message}], units=True)
+        if response is None or getattr(response.choices[0], "finish_reason", None) not in {None, "stop"}:
             return {}
 
         text = self._text_of(response)

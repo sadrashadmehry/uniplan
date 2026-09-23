@@ -77,12 +77,26 @@ Aion returns short Persian text and validated course actions. The local solver
 selects a conflict-free schedule; code exports it through the website. Initial
 PDF scheduling and `/export` make no model calls.
 
-Defaults: `AION_MAX_OUTPUT_TOKENS=512` (previously 1024 for chat) and
-`AION_REASONING_EFFORT=none` for Aion 2.0/3.0/3.0 Mini. Other model IDs omit
-this unsupported option. Disabling reasoning can reduce interpretation quality;
-set the effort explicitly if needed. Aion treats low/medium/high/max as reasoning
-on, and reasoning shares the output budget with the answer.
+Defaults: `AION_MAX_OUTPUT_TOKENS=2048` and `AION_REASONING_EFFORT=low`
+for Aion 2.0/3.0/3.0 Mini. Other model IDs omit the effort option.
+Reasoning and visible output share this token budget. Aion treats
+low/medium/high/max as reasoning enabled, not separate thinking budgets.
 See [Aion API reference](https://api.aionlabs.ai/docs/api-reference/).
+
+A truncated, empty, malformed or schema-invalid answer receives one fresh
+recovery call with twice the configured cap (minimum 4096, maximum 8192).
+Only a complete validated response is applied. There is no guarantee that a
+provider will always return valid JSON; after both attempts fail, the saved
+schedule stays unchanged and the user gets a retry message. Server logs show
+failure category, finish reason and completion usage without chat text or keys.
+The default maximum generated-token allowance is 2048 + 4096 across both
+attempts; unused allowance is not consumed. Valid first responses cost one call.
+
+**Upgrading from the 512-token settings:** update existing bot `.env` values to
+`AION_MAX_OUTPUT_TOKENS=2048` and `AION_REASONING_EFFORT=low`, or remove these
+keys to use defaults, then restart the bot. Pulling code does not overwrite
+local `.env` values. If logs still show `length`, increase the first cap (up to
+8192) based on observed usage. Never expose your API key in logs or reports.
 
 Requests use deduplicated course metadata, compact JSON, current constraints,
 and at most four previous messages within 3000 UTF-8 bytes. User messages over
